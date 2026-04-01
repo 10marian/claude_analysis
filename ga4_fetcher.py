@@ -23,7 +23,7 @@ def _client(credentials_path: str) -> BetaAnalyticsDataClient:
         credentials_path,
         scopes=["https://www.googleapis.com/auth/analytics.readonly"],
     )
-    return BetaAnalyticsDataClient(credentials=creds)
+    return BetaAnalyticsDataClient(credentials=creds, transport="rest")
 
 
 def _date_range(months: int = 12) -> DateRange:
