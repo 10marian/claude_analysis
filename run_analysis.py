@@ -10,6 +10,7 @@ import argparse
 import sys
 import os
 from pathlib import Path
+from pathlib import Path
 
 
 def main():
@@ -69,7 +70,8 @@ def main():
     try:
         from ga4_fetcher import fetch_all
         from ga4_analysis import run_all_analyses
-        from ga4_report import print_report, generate_growth_insights, save_excel_report, save_json_results
+        from ga4_report import print_report, generate_growth_insights, save_json_results
+        from ga4_html_report import generate_html_report
     except ImportError as e:
         print(f"ERROR: Missing dependency — {e}")
         print("Run: pip install -r requirements.txt")
@@ -88,13 +90,14 @@ def main():
     # Step 4: Print report to terminal
     print_report(results, insights, args.property_id)
 
-    # Step 5: Save outputs
-    if not args.no_excel:
-        try:
-            save_excel_report(data, results, insights, args.output_dir)
-        except Exception as e:
-            print(f"Warning: Could not save Excel report: {e}")
+    # Step 5: Save HTML dashboard (primary output)
+    try:
+        html_path = generate_html_report(results, insights, args.property_id, args.output_dir)
+        print(f"\n✅ Open this file in your browser:\n   {os.path.abspath(html_path)}")
+    except Exception as e:
+        print(f"Warning: Could not save HTML report: {e}")
 
+    # Step 6: Optionally save JSON
     if not args.no_json:
         try:
             save_json_results(results, insights, args.output_dir)
